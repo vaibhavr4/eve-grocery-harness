@@ -2,7 +2,8 @@
 
 import type { UserContent } from "ai";
 import { useEveAgent } from "eve/react";
-import { AlertCircleIcon, BrainIcon, ListTreeIcon, PlusIcon, SquareIcon, XIcon } from "lucide-react";
+import { AlertCircleIcon, BrainIcon, FlaskConicalIcon, ListTreeIcon, PlusIcon, SquareIcon, XIcon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import {
   Conversation,
@@ -282,6 +283,12 @@ function ChatHeader({
       <div className="relative mx-auto flex h-full w-full max-w-3xl items-center justify-center bg-background px-24">
         <span className="truncate text-muted-foreground text-sm">{AGENT_NAME}</span>
         <div className="pointer-events-auto absolute top-3 right-6 flex items-center gap-1">
+          <Button aria-label="Model experiments" asChild size="sm" variant="ghost">
+            <Link href="/experiments">
+              <FlaskConicalIcon className="size-4" />
+              <span className="hidden font-normal text-sm sm:inline">Experiments</span>
+            </Link>
+          </Button>
           {canShowTrace ? (
             <Button
               aria-label={showTrace ? "Hide trace" : "Show trace"}

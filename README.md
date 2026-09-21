@@ -7,6 +7,7 @@ An experimentation harness for [eve](https://eve.dev), Vercel's agent framework.
 - **Read-only tools** — `search_products`, `get_product`, `view_cart`, `track_order` never mutate anything.
 - **Low-risk write tools** — `add_to_cart` / `remove_from_cart` mutate a mock cart with no approval, since nothing real happens.
 - **A full trace UI** — every session (root agent and every subagent it spawns) streams its raw event log: reasoning, message text, tool calls with input/output, approvals, and step/turn lifecycle. See [Trace UI](#trace-ui) below.
+- **A model-experiments tab** — standalone benchmarks comparing jev, Claude Sonnet 5, and Claude Opus 5 on tool-picking accuracy/latency and a simulated 500-store item-substitution task. See [`benchmarks/README.md`](./benchmarks/README.md) and [Model experiments](#model-experiments) below.
 
 Everything is backed by an in-memory mock catalog/cart/orders (`agent/lib/catalog.ts`) — there's no real backend, payment processor, or fulfillment. It resets whenever the dev server restarts. Swap in real integrations once you're happy with the shape.
 
@@ -36,9 +37,16 @@ agent/
   channels/eve.ts                # built-in HTTP channel
 
 app/                            # Next.js Web Chat UI (from --channel-web-nextjs)
+  experiments/                  # Model Experiments tab (jev vs Sonnet vs Opus)
 components/trace/
   build-trace.ts                # raw eve stream events -> a renderable trace tree
   session-trace.tsx             # recursive trace panel (mounts one per session, incl. subagents)
+components/experiments/         # charts/tables for the experiments tab
+
+benchmarks/                     # standalone jev vs Sonnet vs Opus suite — see benchmarks/README.md
+  datasets/                     # single-tool, multi-tool, substitution (+ 500-store simulation)
+  runners/                      # npm run bench:*
+  results/                      # gitignored JSON output, read live by /experiments
 ```
 
 ## Getting started
@@ -76,6 +84,10 @@ Try it: ask Basket to "find the best price on eggs and milk" (delegates to `pric
 ## Trying the approval flow
 
 Ask Basket to add a couple of items to your cart and place the order. `place_order` and `process_payment` will each pause the turn — approve or deny them from the chat UI (buttons render inline) or from the Trace panel's pending-request badge. Ask it to issue a refund on a paid order to see the `auto()`/jev path: small, ordinary refunds may clear automatically, while anything unusual escalates to the same human-approval prompt.
+
+## Model experiments
+
+`/experiments` (linked from the chat header) compares jev, Claude Sonnet 5, and Claude Opus 5 on three tasks: single tool-call accuracy/latency, multi-tool sequencing and disambiguation, and a realistic "item out of stock across 500 stores, pick the best replacement" reasoning task with simulated demand-transfer data. It's a standalone benchmark suite — see [`benchmarks/README.md`](./benchmarks/README.md) for setup and how to run it (`npm run bench:all`). The tab reads whatever's in `benchmarks/results/*.json`; with nothing run yet it just tells you what command to run.
 
 ## Adding more
 

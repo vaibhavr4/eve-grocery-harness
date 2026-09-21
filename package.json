@@ -15,7 +15,11 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "build:eve": "eve build",
     "dev:eve": "eve dev",
-    "start:eve": "eve start"
+    "start:eve": "eve start",
+    "bench:single": "tsx benchmarks/runners/run-single-tool.ts",
+    "bench:multi": "tsx benchmarks/runners/run-multi-tool.ts",
+    "bench:substitution": "tsx benchmarks/runners/run-substitution.ts",
+    "bench:all": "tsx benchmarks/runners/run-all.ts"
   },
   "dependencies": {
     "@vercel/connect": "2.2.0",
@@ -51,7 +55,9 @@
     "@types/node": "24.x",
     "typescript": "6.0.3",
     "@types/react": "19.2.15",
-    "@types/react-dom": "19.2.3"
+    "@types/react-dom": "19.2.3",
+    "dotenv": "17.2.3",
+    "tsx": "4.20.6"
   },
   "engines": {
     "node": "24.x"
